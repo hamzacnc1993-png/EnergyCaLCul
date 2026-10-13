@@ -43,11 +43,16 @@ jobs:
           if [ ! -f buildozer.spec ]; then
             yes | buildozer init
           fi
+          
           # تفعيل مكتبة كايفي
           sed -i 's/#requirements = python3,kivy/requirements = python3,kivy/' buildozer.spec || true
           sed -i 's/requirements = python3/requirements = python3,kivy/' buildozer.spec || true
           
-          # ضبط إصدار أندرويد SDK و API لضمان تحميل أدوات الـ Aidl تلقائياً
+          # الموافقة التلقائية على رخصة أندرويد ليتم تحميل الأدوات (مثل aidl) بدون مشاكل
+          sed -i 's/#android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec || true
+          sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec || true
+          
+          # ضبط إصدار أندرويد SDK و API
           sed -i 's/#android.api = 31/android.api = 33/' buildozer.spec || true
           sed -i 's/android.api = 30/android.api = 33/' buildozer.spec || true
           sed -i 's/#android.min_api = 21/android.min_api = 21/' buildozer.spec || true
