@@ -19,6 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          items: 'platforms;android-33 build-tools;33.0.0'
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -49,21 +54,18 @@ jobs:
             yes | buildozer init
           fi
           
-          # تفعيل مكتبة كايفي
           sed -i 's/#requirements = python3,kivy/requirements = python3,kivy/' buildozer.spec || true
           sed -i 's/requirements = python3/requirements = python3,kivy/' buildozer.spec || true
           
-          # الموافقة على رخصة أندرويد
           sed -i 's/#android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec || true
           sed -i 's/android.accept_sdk_license = False/android.accept_sdk_license = True/' buildozer.spec || true
           
-          # تثبيت نسخة NDK مستقرة لتجنب التوقف أثناء التحميل
-          sed -i 's/#android.ndk = 25b/android.ndk = 25b/' buildozer.spec || true
+          echo "android.sdk_path = $ANDROID_SDK_ROOT" >> buildozer.spec
+          
           sed -i 's/#android.api = 31/android.api = 33/' buildozer.spec || true
           sed -i 's/android.api = 30/android.api = 33/' buildozer.spec || true
           sed -i 's/#android.min_api = 21/android.min_api = 21/' buildozer.spec || true
           
-          # إعداد اسم التطبيق
           sed -i 's/#title = My Application/title = Solar PR Calculator/' buildozer.spec || true
           sed -i 's/#package.name = myapp/package.name = solarpr/' buildozer.spec || true
 
